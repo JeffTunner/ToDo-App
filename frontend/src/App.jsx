@@ -4,6 +4,7 @@ import viteLogo from '/vite.svg'
 import HeaderBackground from './features/todo/components/HeaderBackground'
 import moonIcon from "../images/icon-moon.svg";
 import sunIcon from "../images/icon-sun.svg";
+import TodoItem from './features/todo/components/TodoItem';
 
 function App() {
   const [input, setInput] = useState("");
@@ -46,13 +47,20 @@ function App() {
           onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" ? handleAddTodo() : null}/>
         </div>
 
-        <div className="w-full max-w-md bg-white rounded-md mt-4 shadow-lg">
+        <div className="w-full max-w-md bg-white rounded-md mt-4 shadow-lg divide-y">
           {todos.map(todo => (
-            <div key={todo.id} className='flex gap-2.5 justify-center'>
-              <input type="checkbox" name="completed" id={todo.id} onClick={() => handleCompleted(todo.id)}/>
-              <h1 className={todo.completed ? "line-through" : ""}>{todo.text}</h1>
-            </div>
+            <TodoItem key={todo.id} todo={todo} onToggle={handleCompleted} />
           ))}
+        </div>
+
+        <div className="flex justify-between px-4 py-3 text-sm text-gray-500">
+          <span>{todos.length} items left</span>
+          <div className="flex gap-4">
+            <button>All</button>
+            <button>Active</button>
+            <button>Completed</button>
+          </div>
+          <button>Clear Completed</button>
         </div>
 
       </div>
