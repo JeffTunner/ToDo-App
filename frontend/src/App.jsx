@@ -10,6 +10,7 @@ function App() {
   const [input, setInput] = useState("");
   const [todos, setTodos] = useState([]);
   const [isDark, setIsDark] = useState(false);
+  const [filter, setFilter] = useState("all");
 
   function handleAddTodo() {
     if(input.trim() === "") return;
@@ -29,6 +30,18 @@ function App() {
   const cardBg = isDark ? "bg-gray-800" : "bg-white";
   const textPrimary = isDark ? "text-gray-200" : "text-gray-700";
   const textMuted = isDark ? "text-gray-400" : "text-gray-500";
+
+  const activeTodos = todos.filter(todo => !todo.completed).length;
+
+  const filteredTodos = todos.filter(todo => {
+    if(filter === "active") return !todo.completed;
+    if(filter === "completed") return todo.completed;
+    return true;
+  });
+
+  function clearCompleted() {
+    return setTodos(prev => prev.filter(todo => !todo.completed));
+  }
 
   return (
     <>
@@ -52,18 +65,18 @@ function App() {
         </div>
 
         <div className={`w-full max-w-md ${cardBg} rounded-md mt-4 shadow-lg divide-y ${isDark ? "divide-gray-700" : "divide-gray-200"}`}>
-          {todos.map(todo => (
+          {filteredTodos.map(todo => (
             <TodoItem key={todo.id} todo={todo} onToggle={handleCompleted} isDark={isDark}/>
           ))}
 
           <div className="flex justify-between px-4 py-3 text-sm text-gray-500">
-          <span>{todos.length} items left</span>
+          <span>{activeTodos} items left</span>
           <div className="flex gap-4">
-            <button>All</button>
-            <button>Active</button>
-            <button>Completed</button>
+            <button onClick={() => setFilter("all")} className='cursor-pointer'>All</button>
+            <button onClick={() => setFilter("active")} className='cursor-pointer'>Active</button>
+            <button onClick={() => setFilter("completed")} className='cursor-pointer'>Completed</button>
           </div>
-          <button>Clear Completed</button>
+          <button onClick={clearCompleted} className='cursor-pointer'>Clear Completed</button>
         </div>
         </div>
 
