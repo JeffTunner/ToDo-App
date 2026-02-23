@@ -1,13 +1,13 @@
 
-export default function TodoItem({todo, onToggle}) {
+export default function TodoItem({todo, onToggle, isDark}) {
 return (
-    <div className="flex gap-2.5 items-center px-4 py-3">
+    <div className="flex items-center gap-4 px-4 py-4">
       <input
         type="checkbox"
         checked={todo.completed}
         onChange={() => onToggle(todo.id)}
       />
-      <p className={todo.completed ? "line-through" : ""}>
+      <p className={`${isDark ? "text-gray-200" : "text-gray-700"} ${todo.completed ? "line-through text-gray-400" : ""}`}>
         {todo.text}
       </p>
     </div>

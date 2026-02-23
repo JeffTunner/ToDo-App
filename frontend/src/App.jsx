@@ -26,9 +26,13 @@ function App() {
     }));
   }
 
+  const cardBg = isDark ? "bg-gray-800" : "bg-white";
+  const textPrimary = isDark ? "text-gray-200" : "text-gray-700";
+  const textMuted = isDark ? "text-gray-400" : "text-gray-500";
+
   return (
     <>
-     <main className={`relative min-h-screen ${isDark ? "bg-black" : "bg-white"}`}>
+     <main className={`relative min-h-screen ${isDark ? "bg-black" : "bg-gray-100"}`}>
       <div className="absolute top-0 left-0 w-full">
         <HeaderBackground isDark={isDark} />
       </div>
@@ -41,19 +45,18 @@ function App() {
           </button>
         </div>
 
-        <div className="w-full max-w-md bg-white rounded-md p-4 mt-8 shadow-lg flex gap-2.5">
+        <div className={`w-full max-w-md ${cardBg} rounded-md p-4 mt-8 shadow-lg flex gap-2.5`}>
           <input type="checkbox" name="completed" />
-          <input type="text" placeholder='Create a new todo...' className='w-full bg-transparent outline-none' value={input}
+          <input type="text" placeholder='Create a new todo...' className={`w-full bg-transparent outline-none ${textPrimary}`} value={input}
           onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" ? handleAddTodo() : null}/>
         </div>
 
-        <div className="w-full max-w-md bg-white rounded-md mt-4 shadow-lg divide-y">
+        <div className={`w-full max-w-md ${cardBg} rounded-md mt-4 shadow-lg divide-y ${isDark ? "divide-gray-700" : "divide-gray-200"}`}>
           {todos.map(todo => (
-            <TodoItem key={todo.id} todo={todo} onToggle={handleCompleted} />
+            <TodoItem key={todo.id} todo={todo} onToggle={handleCompleted} isDark={isDark}/>
           ))}
-        </div>
 
-        <div className="flex justify-between px-4 py-3 text-sm text-gray-500">
+          <div className="flex justify-between px-4 py-3 text-sm text-gray-500">
           <span>{todos.length} items left</span>
           <div className="flex gap-4">
             <button>All</button>
@@ -61,6 +64,7 @@ function App() {
             <button>Completed</button>
           </div>
           <button>Clear Completed</button>
+        </div>
         </div>
 
       </div>
