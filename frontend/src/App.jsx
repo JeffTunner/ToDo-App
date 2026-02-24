@@ -5,6 +5,16 @@ import HeaderBackground from './features/todo/components/HeaderBackground'
 import moonIcon from "../images/icon-moon.svg";
 import sunIcon from "../images/icon-sun.svg";
 import TodoItem from './features/todo/components/TodoItem';
+import {
+  DndContext,
+  closestCenter
+} from "@dnd-kit/core";
+
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  arrayMove
+} from "@dnd-kit/sortable";
 
 function App() {
   const [input, setInput] = useState("");
@@ -59,6 +69,18 @@ function App() {
     return setTodos(prev => prev.filter(todo => !todo.completed));
   }
 
+  function handleDragEnd(event) {
+  const { active, over } = event;
+
+  if (!over || active.id === over.id) return;
+
+  setTodos((prev) => {
+    const oldIndex = prev.findIndex((t) => t.id === active.id);
+    const newIndex = prev.findIndex((t) => t.id === over.id);
+    return arrayMove(prev, oldIndex, newIndex);
+  });
+}
+
   return (
     <>
      <main className={`relative min-h-screen ${isDark ? "bg-black" : "bg-gray-100"}`}>
@@ -89,9 +111,21 @@ function App() {
             </div>
           )}
           
-          {filteredTodos.map(todo => (
-            <TodoItem key={todo.id} todo={todo} onToggle={handleCompleted} isDark={isDark}/>
-          ))}
+          <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext
+              items={filteredTodos.map(todo => todo.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              {filteredTodos.map(todo => (
+                <TodoItem
+                  key={todo.id}
+                  todo={todo}
+                  onToggle={handleCompleted}
+                  isDark={isDark}
+                />
+              ))}
+            </SortableContext>
+          </DndContext>
 
           <div className={`flex justify-between px-4 py-3 text-sm ${textMuted}`}>
           <span>{activeTodos} items left</span>

@@ -1,7 +1,30 @@
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 export default function TodoItem({todo, onToggle, isDark}) {
+
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition
+  } = useSortable({ id: todo.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition
+  };
+
 return (
-    <div className="flex items-center gap-4 px-4 py-4">
+    <div 
+    ref={setNodeRef}
+    style={style}
+    {...attributes}
+    className="flex items-center gap-4 px-4 py-4">
+    <div {...listeners} className="cursor-grab text-gray-400">
+    ☰
+  </div>
       <div
         onClick={() => onToggle(todo.id)}
         className={`w-5 h-5 rounded-full border flex items-center justify-center cursor-pointer
