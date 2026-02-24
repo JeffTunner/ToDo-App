@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import HeaderBackground from './features/todo/components/HeaderBackground'
@@ -8,9 +8,23 @@ import TodoItem from './features/todo/components/TodoItem';
 
 function App() {
   const [input, setInput] = useState("");
-  const [todos, setTodos] = useState([]);
-  const [isDark, setIsDark] = useState(false);
+  const [todos, setTodos] = useState(() => {
+    const saved = localStorage.getItem("todos");
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [isDark, setIsDark] = useState(() => {
+    const storedTheme = localStorage.getItem("theme");
+    return storedTheme === "dark";
+  });
   const [filter, setFilter] = useState("all");
+
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  },[todos]);
+
+  useEffect(() => {
+    localStorage.setItem("theme", isDark ? "dark" : "light");
+  },[isDark]);
 
   function handleAddTodo() {
     if(input.trim() === "") return;
@@ -39,6 +53,8 @@ function App() {
     return true;
   });
 
+  const filterStyle = (value) => filter === value ? "text-blue-500" : textMuted;
+
   function clearCompleted() {
     return setTodos(prev => prev.filter(todo => !todo.completed));
   }
@@ -65,16 +81,22 @@ function App() {
         </div>
 
         <div className={`w-full max-w-md ${cardBg} rounded-md mt-4 shadow-lg divide-y ${isDark ? "divide-gray-700" : "divide-gray-200"}`}>
+          {filteredTodos.length === 0 && (
+            <div className={`px-4 py-6 text-center ${textMuted}`}>
+              No todos found
+            </div>
+          )}
+          
           {filteredTodos.map(todo => (
             <TodoItem key={todo.id} todo={todo} onToggle={handleCompleted} isDark={isDark}/>
           ))}
 
-          <div className="flex justify-between px-4 py-3 text-sm text-gray-500">
+          <div className={`flex justify-between px-4 py-3 text-sm ${textMuted}`}>
           <span>{activeTodos} items left</span>
           <div className="flex gap-4">
-            <button onClick={() => setFilter("all")} className='cursor-pointer'>All</button>
-            <button onClick={() => setFilter("active")} className='cursor-pointer'>Active</button>
-            <button onClick={() => setFilter("completed")} className='cursor-pointer'>Completed</button>
+            <button onClick={() => setFilter("all")} className={`cursor-pointer ${filterStyle("all")}`}>All</button>
+            <button onClick={() => setFilter("active")} className={`cursor-pointer ${filterStyle("active")}`}>Active</button>
+            <button onClick={() => setFilter("completed")} className={`cursor-pointer ${filterStyle("completed")}`}>Completed</button>
           </div>
           <button onClick={clearCompleted} className='cursor-pointer'>Clear Completed</button>
         </div>
