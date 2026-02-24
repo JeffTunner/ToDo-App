@@ -75,7 +75,9 @@ function App() {
         </div>
 
         <div className={`w-full max-w-md ${cardBg} rounded-md p-4 mt-8 shadow-lg flex gap-2.5`}>
-          <input type="checkbox" name="completed" />
+          <div
+            className={`w-5 h-5 rounded-full border flex items-center justify-center cursor-pointer ${isDark ? "border-gray-600" : "border-gray-300"}`}>
+          </div>
           <input type="text" placeholder='Create a new todo...' className={`w-full bg-transparent outline-none ${textPrimary}`} value={input}
           onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" ? handleAddTodo() : null}/>
         </div>
@@ -93,13 +95,18 @@ function App() {
 
           <div className={`flex justify-between px-4 py-3 text-sm ${textMuted}`}>
           <span>{activeTodos} items left</span>
-          <div className="flex gap-4">
-            <button onClick={() => setFilter("all")} className={`cursor-pointer ${filterStyle("all")}`}>All</button>
-            <button onClick={() => setFilter("active")} className={`cursor-pointer ${filterStyle("active")}`}>Active</button>
-            <button onClick={() => setFilter("completed")} className={`cursor-pointer ${filterStyle("completed")}`}>Completed</button>
+          <div className="flex gap-4 hidden sm:flex">
+            <button onClick={() => setFilter("all")} className={`cursor-pointer hover:text-blue-500 transition-colors ${filterStyle("all")}`}>All</button>
+            <button onClick={() => setFilter("active")} className={`cursor-pointer hover:text-blue-500 transition-colors ${filterStyle("active")}`}>Active</button>
+            <button onClick={() => setFilter("completed")} className={`cursor-pointer hover:text-blue-500 transition-colors ${filterStyle("completed")}`}>Completed</button>
           </div>
-          <button onClick={clearCompleted} className='cursor-pointer'>Clear Completed</button>
+          <button onClick={clearCompleted} className='cursor-pointer hover:text-blue-500 transition-colors'>Clear Completed</button>
         </div>
+        </div>
+        <div className={`sm:hidden mt-4 ${cardBg} rounded-md w-full max-w-md shadow-lg py-3 flex justify-center gap-6 ${textMuted}`}>
+            <button onClick={() => setFilter("all")} className={`cursor-pointer hover:text-blue-500 transition-colors ${filterStyle("all")}`}>All</button>
+            <button onClick={() => setFilter("active")} className={`cursor-pointer hover:text-blue-500 transition-colors ${filterStyle("active")}`}>Active</button>
+            <button onClick={() => setFilter("completed")} className={`cursor-pointer hover:text-blue-500 transition-colors ${filterStyle("completed")}`}>Completed</button>
         </div>
 
       </div>
