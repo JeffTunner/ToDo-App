@@ -1,14 +1,13 @@
 package com.example.to_do_backend.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.example.auth_reference.entity.UserInfo;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.userdetails.User;
 
 @Entity
 @Data
@@ -24,5 +23,9 @@ public class Todo {
     private String description;
 
     private boolean isActive;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserInfo user;
 
 }
