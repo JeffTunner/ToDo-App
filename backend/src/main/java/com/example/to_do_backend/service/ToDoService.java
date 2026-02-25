@@ -1,5 +1,7 @@
 package com.example.to_do_backend.service;
 
+import com.example.auth_reference.entity.UserInfo;
+import com.example.auth_reference.repository.UserRepository;
 import com.example.to_do_backend.dto.RequestDto;
 import com.example.to_do_backend.dto.ResponseDto;
 import com.example.to_do_backend.entity.Todo;
@@ -15,6 +17,9 @@ public class ToDoService {
     @Autowired
     ToDoRepository repository;
 
+    @Autowired
+    UserRepository userRepository;
+
     //DTO -> Entity
     private Todo toEntity(RequestDto dto) {
         Todo todo = new Todo();
@@ -28,14 +33,17 @@ public class ToDoService {
         return new ResponseDto(todo.getId(), todo.getDescription(), todo.isActive());
     }
 
-    public ResponseDto createToDo(RequestDto dto) {
+    public ResponseDto createToDo(RequestDto dto, String username) {
+        UserInfo user = userRepository.findByUsername(username);
         Todo todo = toEntity(dto);
+        todo.setUser(user);
         Todo saved = repository.save(todo);
         return toDto(saved);
     }
 
-    public List<ResponseDto> getAll() {
-        List<Todo> all = repository.findAll();
+    public List<ResponseDto> getAll(String username) {
+        UserInfo user = userRepository.findByUsername(username);
+        List<Todo> all = repository.findByUser(user);
         return all.stream().map(this::toDto).toList();
     }
 
