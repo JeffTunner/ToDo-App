@@ -28,4 +28,7 @@ public class Todo {
     @JoinColumn(name = "user_id")
     private UserInfo user;
 
+    @Column(nullable = false)
+    private Integer position;
+
 }
