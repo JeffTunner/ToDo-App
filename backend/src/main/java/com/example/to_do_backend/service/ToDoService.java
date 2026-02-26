@@ -37,13 +37,15 @@ public class ToDoService {
         UserInfo user = userRepository.findByUsername(username);
         Todo todo = toEntity(dto);
         todo.setUser(user);
+        int nextPosition = repository.countByUser(user);
+        todo.setPosition(nextPosition);
         Todo saved = repository.save(todo);
         return toDto(saved);
     }
 
     public List<ResponseDto> getAll(String username) {
         UserInfo user = userRepository.findByUsername(username);
-        List<Todo> all = repository.findByUser(user);
+        List<Todo> all = repository.findByUserOrderByPositionAsc(user);
         return all.stream().map(this::toDto).toList();
     }
 
@@ -65,5 +67,19 @@ public class ToDoService {
             throw new RuntimeException("Not Authorized");
         }
         repository.delete(found);
+    }
+
+    public void reorder(List<Long> orderIds, String username) {
+        UserInfo user = userRepository.findByUsername(username);
+
+        for (int i = 0; i < orderIds.size(); i++) {
+            Todo todo = repository.findById(orderIds.get(i)).orElseThrow();
+
+            if(!todo.getUser().equals(user)) {
+                throw new RuntimeException("Not Authorized");
+            }
+            todo.setPosition(i);
+            repository.save(todo);
+        }
     }
 }
