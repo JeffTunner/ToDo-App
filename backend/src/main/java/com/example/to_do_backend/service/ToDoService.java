@@ -43,10 +43,15 @@ public class ToDoService {
         return toDto(saved);
     }
 
-    public List<ResponseDto> getAll(String username) {
+    public List<ResponseDto> getByFilter(String username, String filter) {
         UserInfo user = userRepository.findByUsername(username);
-        List<Todo> all = repository.findByUserOrderByPositionAsc(user);
-        return all.stream().map(this::toDto).toList();
+        List<Todo> todos;
+        switch (filter.toLowerCase()) {
+            case "active" -> todos = repository.findByUserAndActiveTrueOrderByPositionAsc(user);
+            case "completed" -> todos = repository.findByUserAndActiveFalseOrderByPositionAsc(user);
+            default -> todos = repository.findByUserOrderByPositionAsc(user);
+        }
+        return todos.stream().map(this::toDto).toList();
     }
 
     public ResponseDto markCompleted(Long id, String username) {
