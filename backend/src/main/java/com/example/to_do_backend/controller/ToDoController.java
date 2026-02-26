@@ -41,4 +41,10 @@ public class ToDoController {
         String username = authentication.getName();
         service.deleteList(id, username);
     }
+
+    @PatchMapping("/todo/reorder")
+    public void reorder(@RequestBody List<Long> orderIds, Authentication authentication) {
+        String username = authentication.getName();
+        service.reorder(orderIds, username);
+    }
 }
