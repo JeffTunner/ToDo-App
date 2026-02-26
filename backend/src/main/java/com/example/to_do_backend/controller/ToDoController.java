@@ -31,12 +31,14 @@ public class ToDoController {
     }
 
     @PatchMapping("/todo/completed/{id}")
-    public ResponseDto complete(@PathVariable Long id) {
-        return service.markCompleted(id);
+    public ResponseDto complete(@PathVariable Long id, Authentication authentication) {
+        String username = authentication.getName();
+        return service.markCompleted(id, username);
     }
 
     @DeleteMapping("/todo/delete/{id}")
-    public void delete(@PathVariable Long id) {
-        service.deleteList(id);
+    public void delete(@PathVariable Long id, Authentication authentication) {
+        String username = authentication.getName();
+        service.deleteList(id, username);
     }
 }

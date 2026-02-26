@@ -47,15 +47,23 @@ public class ToDoService {
         return all.stream().map(this::toDto).toList();
     }
 
-    public ResponseDto markCompleted(Long id) {
+    public ResponseDto markCompleted(Long id, String username) {
+        UserInfo user = userRepository.findByUsername(username);
         Todo found = repository.findById(id).orElseThrow(() -> new RuntimeException("List not found"));
+        if(!found.getUser().equals(user)) {
+            throw new RuntimeException("Not Authorized");
+        }
         found.setActive(false);
         Todo saved = repository.save(found);
         return toDto(saved);
     }
 
-    public void deleteList(Long id) {
+    public void deleteList(Long id, String username) {
+        UserInfo user = userRepository.findByUsername(username);
         Todo found = repository.findById(id).orElseThrow(() -> new RuntimeException("List not found"));
+        if(!found.getUser().equals(user)) {
+            throw new RuntimeException("Not Authorized");
+        }
         repository.delete(found);
     }
 }
