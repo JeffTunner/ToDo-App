@@ -11,4 +11,8 @@ import java.util.List;
 public interface ToDoRepository extends JpaRepository<Todo, Long> {
 
     List<Todo> findByUser(UserInfo user);
+
+    int countByUser(UserInfo user);
+
+    List<Todo> findByUserOrderByPositionAsc(UserInfo user);
 }
