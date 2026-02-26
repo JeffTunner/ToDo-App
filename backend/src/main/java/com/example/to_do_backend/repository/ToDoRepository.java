@@ -15,4 +15,8 @@ public interface ToDoRepository extends JpaRepository<Todo, Long> {
     int countByUser(UserInfo user);
 
     List<Todo> findByUserOrderByPositionAsc(UserInfo user);
+
+    List<Todo> findByUserAndActiveTrueOrderByPositionAsc(UserInfo user);
+
+    List<Todo> findByUserAndActiveFalseOrderByPositionAsc(UserInfo user);
 }

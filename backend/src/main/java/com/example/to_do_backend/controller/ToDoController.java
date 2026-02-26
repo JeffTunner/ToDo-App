@@ -24,10 +24,10 @@ public class ToDoController {
         return service.createToDo(dto, username);
     }
 
-    @GetMapping("/todo/all")
-    public List<ResponseDto> all(Authentication authentication) {
+    @GetMapping("/todo")
+    public List<ResponseDto> getTodo(@RequestParam(defaultValue = "all") String filter, Authentication authentication) {
         String username = authentication.getName();
-        return service.getAll(username);
+        return service.getByFilter(username, filter);
     }
 
     @PatchMapping("/todo/completed/{id}")
