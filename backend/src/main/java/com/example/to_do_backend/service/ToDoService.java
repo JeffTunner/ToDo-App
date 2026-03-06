@@ -5,6 +5,8 @@ import com.example.auth_reference.repository.UserRepository;
 import com.example.to_do_backend.dto.RequestDto;
 import com.example.to_do_backend.dto.ResponseDto;
 import com.example.to_do_backend.entity.Todo;
+import com.example.to_do_backend.exception.ResourceNotFoundException;
+import com.example.to_do_backend.exception.UnauthorizedException;
 import com.example.to_do_backend.repository.ToDoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,9 +58,9 @@ public class ToDoService {
 
     public ResponseDto markCompleted(Long id, String username) {
         UserInfo user = userRepository.findByUsername(username);
-        Todo found = repository.findById(id).orElseThrow(() -> new RuntimeException("List not found"));
+        Todo found = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Todo not Found"));
         if(!found.getUser().equals(user)) {
-            throw new RuntimeException("Not Authorized");
+            throw new UnauthorizedException("Not Authorized");
         }
         found.setActive(false);
         Todo saved = repository.save(found);
@@ -67,9 +69,9 @@ public class ToDoService {
 
     public void deleteList(Long id, String username) {
         UserInfo user = userRepository.findByUsername(username);
-        Todo found = repository.findById(id).orElseThrow(() -> new RuntimeException("List not found"));
+        Todo found = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Todo not Found"));
         if(!found.getUser().equals(user)) {
-            throw new RuntimeException("Not Authorized");
+            throw new UnauthorizedException("Not Authorized");
         }
         repository.delete(found);
     }
@@ -81,7 +83,7 @@ public class ToDoService {
             Todo todo = repository.findById(orderIds.get(i)).orElseThrow();
 
             if(!todo.getUser().equals(user)) {
-                throw new RuntimeException("Not Authorized");
+                throw new UnauthorizedException("Not Authorized");
             }
             todo.setPosition(i);
             repository.save(todo);
