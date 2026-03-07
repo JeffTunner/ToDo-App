@@ -5,6 +5,7 @@ import HeaderBackground from './features/todo/components/HeaderBackground'
 import moonIcon from "../images/icon-moon.svg";
 import sunIcon from "../images/icon-sun.svg";
 import TodoItem from './features/todo/components/TodoItem';
+import { getTodos, createTodo, completeTodo, deleteTodo } from "./api/api";
 import {
   DndContext,
   closestCenter
@@ -18,10 +19,15 @@ import {
 
 function App() {
   const [input, setInput] = useState("");
-  const [todos, setTodos] = useState(() => {
-    const saved = localStorage.getItem("todos");
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [todos, setTodos] = useState([]);
+  useEffect(() => {
+    loadTodos();
+  }, []);
+
+  const loadTodos = async () => {
+    const data = await getTodos();
+    setTodos(data);
+  };
   const [isDark, setIsDark] = useState(() => {
     const storedTheme = localStorage.getItem("theme");
     return storedTheme === "dark";
@@ -29,26 +35,21 @@ function App() {
   const [filter, setFilter] = useState("all");
 
   useEffect(() => {
-    localStorage.setItem("todos", JSON.stringify(todos));
-  },[todos]);
-
-  useEffect(() => {
     localStorage.setItem("theme", isDark ? "dark" : "light");
   },[isDark]);
 
-  function handleAddTodo() {
+  async function handleAddTodo() {
     if(input.trim() === "") return;
-    setTodos(prev => [...prev, { id: Date.now(), text: input, completed: false }]);
+    const newTodo = await createTodo(input);
+    setTodos(prev => [...prev, newTodo]);
     setInput("");
   }
 
-  function handleCompleted(id) {
-    setTodos(prev => prev.map(todo => {
-      if(todo.id === id) {
-        return {...todo, completed: !todo.completed}
-      }
-      return todo;
-    }));
+  async function handleCompleted(id) {
+    const updated = await handleCompleted(id);
+    setTodos(prev => prev.map(todo => 
+      todo.id == id ? updated : todo
+    ));
   }
 
   const cardBg = isDark ? "bg-gray-800" : "bg-white";
@@ -79,6 +80,12 @@ function App() {
     const newIndex = prev.findIndex((t) => t.id === over.id);
     return arrayMove(prev, oldIndex, newIndex);
   });
+
+  async function handleDelete(id) {
+  await deleteTodo(id);
+
+  setTodos(prev => prev.filter(todo => todo.id !== id));
+}
 }
 
   return (
@@ -121,6 +128,7 @@ function App() {
                   key={todo.id}
                   todo={todo}
                   onToggle={handleCompleted}
+                  onDelete={handleDelete}
                   isDark={isDark}
                 />
               ))}

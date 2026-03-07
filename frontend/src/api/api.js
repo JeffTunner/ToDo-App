@@ -27,7 +27,7 @@ export const registerUser = async (username, password) => {
 const getToken = () => localStorage.getItem("token");
 
 export const getTodos = async () => {
-    const res = await fetch(`${BASE_URL}/api/v1/todo`, {
+    const res = await fetch(`${BASE_URL}/api/v1/todo/all`, {
         headers: {
             Authorization: `Bearer ${getToken()}`
         }
