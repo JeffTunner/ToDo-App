@@ -26,14 +26,14 @@ export const registerUser = async (username, password) => {
 
 const getToken = () => localStorage.getItem("token");
 
-export const getTodos = async () => {
-    const res = await fetch(`${BASE_URL}/api/v1/todo/all`, {
-        headers: {
-            Authorization: `Bearer ${getToken()}`
-        }
-    });
+export const getTodos = async (filter = "all") => {
+  const res = await fetch(`${BASE_URL}/api/v1/todo?filter=${filter}`, {
+    headers: {
+      Authorization: `Bearer ${getToken()}`
+    }
+  });
 
-    return res.json();
+  return res.json();
 };
 
 export const createTodo = async (description) => {
@@ -43,7 +43,9 @@ export const createTodo = async (description) => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${getToken()}`
         },
-        body: JSON.stringify({description}) 
+        body: JSON.stringify({
+            description: description
+        }) 
     });
 
     return res.json();
@@ -62,6 +64,7 @@ export const completeTodo = async (id) => {
 
 export const deleteTodo = async (id) => {
     await fetch(`${BASE_URL}/api/v1/todo/delete/${id}`, {
+        method: "DELETE",
         headers: {
             Authorization: `Bearer ${getToken()}`
         }
